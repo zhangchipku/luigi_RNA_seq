@@ -3,6 +3,7 @@ import os
 from luigi.local_target import LocalTarget
 from luigi.contrib.external_program import ExternalProgramTask
 from pathlib import Path
+from .luigi.task import Requires, Requirement
 
 
 class HumanRNA(ExternalTask):
@@ -20,15 +21,17 @@ class Salmon(ExternalTask):
 
 
 class SalmonIndex(ExternalProgramTask):
+    human_mRNA_path = Parameter()
+    salmon_path = Parameter()
     index_path = Parameter()
 
-    def requires(self):
-        return {'human_rna': self.clone(HumanRNA),
-                'salmon': self.clone(Salmon)}
+    requires = Requires()
+    huamn_rna = Requirement(HumanRNA)
+    salmon = Requirement(Salmon)
 
     def output(self):
         flag = '__SUCCESS'
-        return os.path.join(self.index_path, flag)
+        return os.path.join(str(self.index_path), flag)
 
     def program_args(self):
         return [

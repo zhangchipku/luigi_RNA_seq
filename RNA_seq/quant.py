@@ -3,10 +3,13 @@ import os
 from luigi.contrib.external_program import ExternalProgramTask
 from pathlib import Path
 from .index import Salmon, SalmonIndex
+from .luigi.task import Requires, Requirement
 
 
 class FastqInput(ExternalTask):
+    # constant
     fastq_root = os.path.join('data', 'fastq')
+    # parameters
     file_id = Parameter()
     fastq_r1 = Parameter()
     fastq_r2 = Parameter()
@@ -25,17 +28,26 @@ class FastqInput(ExternalTask):
 
 
 class SalmonQuant(ExternalProgramTask):
+    # constant
     output_root = os.path.join('data', 'output')
+    # parameters
     file_id = Parameter()
-
-    def requires(self):
-        return {'fastq': self.clone(FastqInput),
-                'index': self.clone(SalmonIndex),
-                'salmon': self.clone(Salmon)}
+    human_mRNA_path = Parameter()
+    salmon_path = Parameter()
+    index_path = Parameter()
+    fastq_root = os.path.join('data', 'fastq')
+    fastq_r1 = Parameter()
+    fastq_r2 = Parameter()
+    fastq_suffix = Parameter()
+    # requirements
+    requires = Requires()
+    fastq = Requirement(FastqInput)
+    salmon = Requirement(Salmon)
+    index = Requirement(SalmonIndex)
 
     def output(self):
         flag = '__SUCCESS'
-        return os.path.join(self.output_root, self.file_id, flag)
+        return os.path.join(self.output_root, str(self.file_id), flag)
 
     def program_args(self):
         return [
