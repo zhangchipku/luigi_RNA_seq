@@ -41,7 +41,7 @@ class SummarizeMapping(ExternalProgramTask):
         ]
 
     def run(self):
-        with self.output().path as self.temp_output_path:
+        with self.output().temporary_path() as self.temp_output_path:
             super().run()
 
 class SummarizeCounts(Task):
