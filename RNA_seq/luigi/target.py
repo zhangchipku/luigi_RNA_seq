@@ -2,6 +2,7 @@ from luigi.local_target import LocalTarget, atomic_file
 import os
 from contextlib import contextmanager
 
+
 class suffix_preserving_atomic_file(atomic_file):
     def generate_tmp_path(self, path):
         """

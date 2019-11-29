@@ -1,4 +1,4 @@
-from luigi import ExternalTask, Parameter
+from luigi import ExternalTask, Parameter, IntParameter
 import os
 from luigi.local_target import LocalTarget
 from luigi.contrib.external_program import ExternalProgramTask
@@ -21,22 +21,26 @@ class Salmon(ExternalTask):
 
 
 class SalmonIndex(ExternalProgramTask):
+    # parameters
     human_mRNA_path = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
-
+    n_threads = IntParameter()
+    # requirements
     requires = Requires()
     huamn_rna = Requirement(HumanRNA)
     salmon = Requirement(Salmon)
 
     def output(self):
         flag = '__SUCCESS'
-        return os.path.join(str(self.index_path), flag)
+        return LocalTarget(os.path.join(str(self.index_path), flag))
 
     def program_args(self):
         return [
             self.input()['salmon'].path,
             "index",
+            "-p",
+            self.n_threads,
             "-t",
             self.input()['human_rna'].path,
             "-i",
