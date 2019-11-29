@@ -2,7 +2,7 @@ from luigi import Parameter, Task, IntParameter
 import os
 from luigi.contrib.external_program import ExternalProgramTask
 from .quant import SalmonQuant
-from .luigi.target import suffix_preserving_atomic_file
+from .luigi.target import SuffixPreservingLocalTarget
 import pandas as pd
 
 
@@ -24,12 +24,12 @@ class SummarizeMapping(ExternalProgramTask):
     # requirements
     def requires(self):
         with open(str(self.ID_path), 'r') as id_file:
-            ids = id_file.readlines()
+            ids = id_file.read().splitlines()
         return {x: self.clone(SalmonQuant, file_id=x) for x in ids}
 
     def output(self):
         map_summary = 'mapping_summary.txt'
-        return suffix_preserving_atomic_file(os.path.join(self.output_root, map_summary))
+        return SuffixPreservingLocalTarget(os.path.join(self.output_root, map_summary))
 
     def program_args(self):
         return [
@@ -61,21 +61,21 @@ class SummarizeCounts(Task):
     # requirements
     def requires(self):
         with open(str(self.ID_path), 'r') as id_file:
-            ids = id_file.readlines()
+            ids = id_file.read().splitlines()
         return {x: self.clone(SalmonQuant, file_id=x) for x in ids}
 
     def output(self):
         count_summary = 'count_summary.csv'
         tpm_summary = 'tpm_summary.csv'
-        return {'count': suffix_preserving_atomic_file(os.path.join(self.output_root, count_summary)),
-                'tpm': suffix_preserving_atomic_file(os.path.join(self.output_root, tpm_summary))}
+        return {'count': SuffixPreservingLocalTarget(os.path.join(self.output_root, count_summary)),
+                'tpm': SuffixPreservingLocalTarget(os.path.join(self.output_root, tpm_summary))}
 
     def _get_sample_quant(self, x):
         return os.path.join(os.path.dirname(self.input()[x]), 'quant.sf')
 
     def run(self):
         with open(str(self.ID_path), 'r') as id_file:
-            ids = id_file.readlines()
+            ids = id_file.read().splitlines()
 
         with open(self._get_sample_quant(ids[0]), 'r') as file:
             df = pd.read_table(file)
