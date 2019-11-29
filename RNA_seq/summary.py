@@ -71,7 +71,7 @@ class SummarizeCounts(Task):
                 'tpm': SuffixPreservingLocalTarget(os.path.join(self.output_root, tpm_summary))}
 
     def _get_sample_quant(self, x):
-        return os.path.join(os.path.dirname(self.input()[x]), 'quant.sf')
+        return os.path.join(os.path.dirname(self.input()[x].path), 'quant.sf')
 
     def run(self):
         with open(str(self.ID_path), 'r') as id_file:
@@ -90,7 +90,7 @@ class SummarizeCounts(Task):
             tpm[x] = df['TPM']
 
         with self.output()['count'].open('w') as count_out:
-            counts.to_csv(count_out)
+            counts.to_csv(count_out, index=False)
 
         with self.output()['tpm'].open('w') as tpm_out:
-            tpm.to_csv(tpm_out)
+            tpm.to_csv(tpm_out, index=False)
