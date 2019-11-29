@@ -60,7 +60,7 @@ class SalmonQuant(ExternalProgramTask):
             "-i",
             os.path.dirname(self.input()['index'].path),
             "-l",
-            "IA",
+            "A",
             "-1",
             self.input()['fastq']['R1'].path,
             "-2",
