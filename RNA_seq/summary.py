@@ -41,7 +41,7 @@ class SummarizeMapping(ExternalProgramTask):
         ]
 
     def run(self):
-        with self.output().temporary_path() as self.temp_output_path:
+        with self.output().path as self.temp_output_path:
             super().run()
 
 class SummarizeCounts(Task):
@@ -89,8 +89,8 @@ class SummarizeCounts(Task):
             counts[x] = df['NumReads']
             tpm[x] = df['TPM']
 
-        with self.output()['count'].temporary_path() as count_out:
+        with self.output()['count'].open('w') as count_out:
             counts.to_csv(count_out)
 
-        with self.output()['tpm'].temporary_path() as tpm_out:
+        with self.output()['tpm'].open('w') as tpm_out:
             tpm.to_csv(tpm_out)
