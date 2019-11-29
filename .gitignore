@@ -107,4 +107,4 @@ venv.bak/
 #patch
 *.patch
 data/
-
+*id.txt
