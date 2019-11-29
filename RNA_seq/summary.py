@@ -19,6 +19,7 @@ class SummarizeMapping(ExternalProgramTask):
     fastq_r1 = Parameter()
     fastq_r2 = Parameter()
     fastq_suffix = Parameter()
+    n_threads = IntParameter()
 
     # requirements
     def requires(self):
