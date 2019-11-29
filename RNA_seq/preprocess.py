@@ -50,10 +50,16 @@ class MapFigure(Task):
         with self.input()["sum_map"].open("r") as file:
             df = pd.read_table(file)
         # write png files
+        sns.set(rc={'figure.figsize': (12, 8)})
+        rate_plot = sns.barplot(x="Sample", y="Mapped_Rate", data=df)
+        rate_plot.set_xticklabels(df.Sample, rotation=45, ha='right')
         with self.output()["rate"].open("w") as rate_out:
-            sns.barplot(x="Sample", y="Mapped_Rate", data=df).figure.savefig(rate_out)
+            rate_plot.figure.savefig(rate_out, dpi=600)
+
+        reads_plot = sns.barplot(x="Sample", y="Mapped_Reads", data=df)
+        reads_plot.set_xticklabels(df.Sample, rotation=45, ha='right')
         with self.output()["reads"].open("w") as reads_out:
-            sns.barplot(x="Sample", y="Mapped_Reads", data=df).figure.savefig(reads_out)
+            reads_plot.figure.savefig(reads_out, dpi=600)
 
 
 class AnnotationFile(ExternalTask):
