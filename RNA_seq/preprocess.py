@@ -1,13 +1,18 @@
 import pandas as pd
 import seaborn as sns
 from luigi import Parameter, Task, IntParameter, format, ExternalTask, LocalTarget
-import os
 from .summary import SummarizeCounts, SummarizeMapping
 from .luigi.target import SuffixPreservingLocalTarget
-from .luigi.task import Requirement, Requires
+from .luigi.task import Requirement, Requires, TargetOutput
 
 
 class MapFigure(Task):
+    """
+    Visualize mapping stats from mapping summary table
+    Require all sample quantification
+    Output two png files containing mapping stats
+    Use Require and targetoutput descriptor for composition
+    """
     # constant
     output_root = SummarizeMapping.output_root
     # parameters
@@ -23,33 +28,38 @@ class MapFigure(Task):
     # requirements
     requires = Requires()
     sum_map = Requirement(SummarizeMapping)
+    # output
+    rate_out = TargetOutput(
+        target_class=SuffixPreservingLocalTarget,
+        root_dir=output_root,
+        ext="_rate.png",
+        format=format.Nop,
+    )
+    reads_out = TargetOutput(
+        target_class=SuffixPreservingLocalTarget,
+        root_dir=output_root,
+        ext="_reads.png",
+        format=format.Nop,
+    )
 
     def output(self):
-        return {
-            "rate": SuffixPreservingLocalTarget(
-                os.path.join(self.output_root, "map_rates.png"), format=format.Nop
-            ),
-            "reads": SuffixPreservingLocalTarget(
-                os.path.join(self.output_root, "map_reads.png"), format=format.Nop
-            ),
-        }
+        return {"rate": self.rate_out(), "reads": self.reads_out()}
 
     def run(self):
+        # Read summary
         with self.input()["sum_map"].open("r") as file:
             df = pd.read_table(file)
-
+        # write png files
         with self.output()["rate"].open("w") as rate_out:
-            sns.barplot(x="Sample", y="Mapped_Rate", data=df).figure.savefig(
-                rate_out
-            )
-
+            sns.barplot(x="Sample", y="Mapped_Rate", data=df).figure.savefig(rate_out)
         with self.output()["reads"].open("w") as reads_out:
-            sns.barplot(x="Sample", y="Mapped_Reads", data=df).figure.savefig(
-                reads_out
-            )
+            sns.barplot(x="Sample", y="Mapped_Reads", data=df).figure.savefig(reads_out)
 
 
 class AnnotationFile(ExternalTask):
+    """
+    Make sure annotation file containing transcript ID mapping to gene name exists
+    """
     annotation_path = Parameter()
 
     def output(self):
@@ -57,6 +67,15 @@ class AnnotationFile(ExternalTask):
 
 
 class CleanCounts(Task):
+    """
+    Clean up counts and tpm table
+    Map transcript IDs to gene names
+    Sum up counts and tpms by gene
+    Remove non-expressiong genes
+    Require all sample quantification
+    Output two csv files containing gene counts and tpms
+    Use Require and targetoutput descriptor for composition
+    """
     # constant
     output_root = SummarizeMapping.output_root
     # parameters
@@ -75,25 +94,26 @@ class CleanCounts(Task):
     map_fig = Requirement(MapFigure)
     annotation = Requirement(AnnotationFile)
     raw_counts = Requirement(SummarizeCounts)
+    # output
+    tpm_out = TargetOutput(
+        target_class=SuffixPreservingLocalTarget, ext="_tpm.csv", root_dir=output_root
+    )
+    count_out = TargetOutput(
+        target_class=SuffixPreservingLocalTarget, ext="_count.csv", root_dir=output_root
+    )
 
     def output(self):
-        return {
-            "tpm": SuffixPreservingLocalTarget(
-                os.path.join(self.output_root, "clean_tpm.csv")
-            ),
-            "count": SuffixPreservingLocalTarget(
-                os.path.join(self.output_root, "clean_count.csv")
-            ),
-        }
+        return {"tpm": self.tpm_out(), "count": self.count_out()}
 
     def run(self):
+        # Read annotations and raw transcript tables
         with self.input()["annotation"].open("r") as file:
             anno = pd.read_table(file)
         with self.input()["raw_counts"]["tpm"].open("r") as file:
             tpm_raw = pd.read_csv(file)
         with self.input()["raw_counts"]["count"].open("r") as file:
             count_raw = pd.read_csv(file)
-
+        # Map transcripts to gene names, sum by gene
         tpm_clean = (
             pd.merge(anno, tpm_raw, on="transcript_ID")
             .groupby("gene_name")
@@ -101,9 +121,6 @@ class CleanCounts(Task):
             .drop("transcript_length", axis=1)
             .reset_index()
         )
-        keep = tpm_clean.mean(axis=1) > 0.5
-        tpm_clean = tpm_clean[keep]
-
         count_clean = (
             pd.merge(anno, count_raw, on="transcript_ID")
             .groupby("gene_name")
@@ -111,10 +128,13 @@ class CleanCounts(Task):
             .drop("transcript_length", axis=1)
             .reset_index()
         )
+        # use avg tpm from all samples > 0.5 as cutoff
+        # drop non-expressing genes
+        keep = tpm_clean.mean(axis=1) > 0.5
+        tpm_clean = tpm_clean[keep]
         count_clean = count_clean[keep]
-
+        # write csvs
         with self.output()["count"].open("w") as out:
             count_clean.to_csv(out, index=False)
-
         with self.output()["tpm"].open("w") as out:
             tpm_clean.to_csv(out, index=False)

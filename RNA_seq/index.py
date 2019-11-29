@@ -7,6 +7,10 @@ from .luigi.task import Requires, Requirement
 
 
 class HumanRNA(ExternalTask):
+    """
+    Make sure human transcriptome file exists
+    """
+
     human_mRNA_path = Parameter()
 
     def output(self):
@@ -14,6 +18,10 @@ class HumanRNA(ExternalTask):
 
 
 class Salmon(ExternalTask):
+    """
+    Make sure Salmon executable exists
+    """
+
     salmon_path = Parameter()
 
     def output(self):
@@ -21,6 +29,11 @@ class Salmon(ExternalTask):
 
 
 class SalmonIndex(ExternalProgramTask):
+    """
+    Build salmon index from human transcriptome
+    Use Require descriptors for composition
+    """
+
     # parameters
     human_mRNA_path = Parameter()
     salmon_path = Parameter()
@@ -32,6 +45,11 @@ class SalmonIndex(ExternalProgramTask):
     salmon = Requirement(Salmon)
 
     def output(self):
+        """
+        The index output is a folder (specified by user).
+        Use flag file to mark complete
+        :return: success flag file
+        """
         flag = "__SUCCESS"
         return LocalTarget(os.path.join(str(self.index_path), flag))
 
