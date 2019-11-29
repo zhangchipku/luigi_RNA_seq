@@ -5,7 +5,7 @@ if (@ARGV <1) {
 }
 sub getCountingSummary {
 	my $id = shift;
-	open (SUMMARY, "<", "$ARGV[1]/$id/salmon.log") || die $@;
+	open (SUMMARY, "$ARGV[1]/$id/logs/salmon_quant.log") || die $@;
 
 	my ($total_reads, $mapped_reads, $percent_mapped);
 	while (my $aline = <SUMMARY>) {
@@ -29,7 +29,7 @@ sub getCountingSummary {
 }
 
 
-open (OUTPUT, $ARGV[2]) || die $@;
+open (OUTPUT, ">$ARGV[2]") || die $@;
 
 print OUTPUT "Sample\tTotal_Reads\tMapped_Reads\tMapped_Rate\n";
 
