@@ -32,19 +32,19 @@ class SalmonIndex(ExternalProgramTask):
     salmon = Requirement(Salmon)
 
     def output(self):
-        flag = '__SUCCESS'
+        flag = "__SUCCESS"
         return LocalTarget(os.path.join(str(self.index_path), flag))
 
     def program_args(self):
         return [
-            self.input()['salmon'].path,
+            self.input()["salmon"].path,
             "index",
             "-p",
             self.n_threads,
             "-t",
-            self.input()['human_rna'].path,
+            self.input()["human_rna"].path,
             "-i",
-            self.index_path
+            self.index_path,
         ]
 
     def run(self):
