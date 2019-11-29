@@ -28,7 +28,7 @@ class SalmonIndex(ExternalProgramTask):
     n_threads = IntParameter()
     # requirements
     requires = Requires()
-    huamn_rna = Requirement(HumanRNA)
+    human_rna = Requirement(HumanRNA)
     salmon = Requirement(Salmon)
 
     def output(self):
