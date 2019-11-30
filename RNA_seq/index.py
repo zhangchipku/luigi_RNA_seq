@@ -34,6 +34,7 @@ class SalmonIndex(ExternalProgramTask):
     Use Require descriptors for composition
     """
 
+    flag = "__SUCCESS"
     # parameters
     human_mRNA_path = Parameter()
     salmon_path = Parameter()
@@ -50,8 +51,7 @@ class SalmonIndex(ExternalProgramTask):
         Use flag file to mark complete
         :return: success flag file
         """
-        flag = "__SUCCESS"
-        return LocalTarget(os.path.join(str(self.index_path), flag))
+        return LocalTarget(os.path.join(str(self.index_path), self.flag))
 
     def program_args(self):
         return [

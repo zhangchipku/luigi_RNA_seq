@@ -46,12 +46,13 @@ class SalmonQuant(ExternalProgramTask):
 
     # constant
     output_root = os.path.join("data", "output")
+    fastq_root = os.path.join("data", "fastq")
+    flag = "__SUCCESS"
     # parameters
     file_id = Parameter()
     human_mRNA_path = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
-    fastq_root = os.path.join("data", "fastq")
     fastq_r1 = Parameter()
     fastq_r2 = Parameter()
     fastq_suffix = Parameter()
@@ -69,8 +70,7 @@ class SalmonQuant(ExternalProgramTask):
         Use flag file to mark complete
         :return: success flag file
         """
-        flag = "__SUCCESS"
-        return LocalTarget(os.path.join(self.output_root, str(self.file_id), flag))
+        return LocalTarget(os.path.join(self.output_root, str(self.file_id), self.flag))
 
     def program_args(self):
         return [

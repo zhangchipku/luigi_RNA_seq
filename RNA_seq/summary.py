@@ -15,6 +15,7 @@ class SummarizeMapping(ExternalProgramTask):
     Output a table text file containing the mapping stats for all samples
     Use targetoutput descriptor for composition
     """
+
     # constant
     output_root = os.path.join("data", "summary")
     perl_script = os.path.join("data", "scripts", "get_salmon_summary.pl")
@@ -63,6 +64,7 @@ class SummarizeCounts(Task):
     Output two csv files containing the transcript counts and tpms for all samples
     Use targetoutput descriptor for composition
     """
+
     # constant
     output_root = SummarizeMapping.output_root
     input_root = SalmonQuant.output_root
