@@ -1,5 +1,5 @@
 use strict;
-if (@ARGV <1) {
+if (@ARGV <3) {
 	print "$0 <id file> <input_folder> <output_file>\n";
 	exit;
 }
