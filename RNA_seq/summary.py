@@ -22,7 +22,7 @@ class SummarizeMapping(ExternalProgramTask):
     input_root = SalmonQuant.output_root
     # parameters
     ID_path = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     fastq_r1 = Parameter()
@@ -70,7 +70,7 @@ class SummarizeCounts(Task):
     input_root = SalmonQuant.output_root
     # parameters
     ID_path = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     fastq_r1 = Parameter()

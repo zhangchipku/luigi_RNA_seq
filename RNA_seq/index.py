@@ -8,13 +8,13 @@ from .luigi.task import Requires, Requirement
 
 class HumanRNA(ExternalTask):
     """
-    Make sure human transcriptome file exists
+    Make sure transcriptome file exists
     """
 
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
 
     def output(self):
-        return LocalTarget(str(self.human_mRNA_path))
+        return LocalTarget(str(self.transcriptome))
 
 
 class Salmon(ExternalTask):
@@ -36,7 +36,7 @@ class SalmonIndex(ExternalProgramTask):
 
     flag = "__SUCCESS"
     # parameters
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     n_threads = IntParameter()

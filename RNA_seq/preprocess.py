@@ -18,7 +18,7 @@ class MapFigure(Task):
     output_root = SummarizeMapping.output_root
     # parameters
     ID_path = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     fastq_r1 = Parameter()
@@ -89,7 +89,7 @@ class CleanCounts(Task):
     output_root = SummarizeMapping.output_root
     # parameters
     ID_path = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     fastq_r1 = Parameter()

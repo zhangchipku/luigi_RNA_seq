@@ -126,7 +126,7 @@ class TaskTests(TestCase):
                     DummyClean(
                         ID_path=id_path,
                         annotation_path=annot_path,
-                        human_mRNA_path="fake",
+                        transcriptome="fake",
                         salmon_path="fake",
                         index_path="fake",
                         fastq_r1="fake",

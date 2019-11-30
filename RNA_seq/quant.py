@@ -50,7 +50,7 @@ class SalmonQuant(ExternalProgramTask):
     flag = "__SUCCESS"
     # parameters
     file_id = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
     fastq_r1 = Parameter()
