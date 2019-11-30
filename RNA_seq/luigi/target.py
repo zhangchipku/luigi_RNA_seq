@@ -18,7 +18,7 @@ class BaseAtomicProviderLocalTarget(LocalTarget):
     # Allow some composability of atomic handling
     atomic_provider = atomic_file
 
-    def open(self, mode='r'):
+    def open(self, mode="r"):
         """
         open the specified file
         :param mode: opening mode
@@ -26,8 +26,8 @@ class BaseAtomicProviderLocalTarget(LocalTarget):
         """
         # leverage super() as well as modifying any code in LocalTarget
         # to use self.atomic_provider rather than atomic_file
-        rwmode = mode.replace('b', '').replace('t', '')
-        if rwmode == 'w':
+        rwmode = mode.replace("b", "").replace("t", "")
+        if rwmode == "w":
             self.makedirs()
             return self.format.pipe_writer(self.atomic_provider(self.path))
 
@@ -50,4 +50,5 @@ class SuffixPreservingLocalTarget(BaseAtomicProviderLocalTarget):
     """
     New luigi local target class that preserves the extension of temp file
     """
+
     atomic_provider = suffix_preserving_atomic_file

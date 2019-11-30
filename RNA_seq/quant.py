@@ -8,6 +8,10 @@ from .luigi.task import Requires, Requirement
 
 
 class FastqInput(ExternalTask):
+    """
+    Make sure sample sequence files exists
+    """
+
     # constant
     fastq_root = os.path.join("data", "fastq")
     # parameters
@@ -34,18 +38,26 @@ class FastqInput(ExternalTask):
 
 
 class SalmonQuant(ExternalProgramTask):
+    """
+    Run the sample sequence quantification using Salmon
+    Outputs logs containing mapping stats and transcript counts/tpms
+    Use require descriptors for composition
+    """
+
     # constant
     output_root = os.path.join("data", "output")
+    fastq_root = os.path.join("data", "fastq")
+    flag = "__SUCCESS"
     # parameters
     file_id = Parameter()
-    human_mRNA_path = Parameter()
+    transcriptome = Parameter()
     salmon_path = Parameter()
     index_path = Parameter()
-    fastq_root = os.path.join("data", "fastq")
     fastq_r1 = Parameter()
     fastq_r2 = Parameter()
     fastq_suffix = Parameter()
     n_threads = IntParameter()
+
     # requirements
     requires = Requires()
     fastq = Requirement(FastqInput)
@@ -53,8 +65,12 @@ class SalmonQuant(ExternalProgramTask):
     index = Requirement(SalmonIndex)
 
     def output(self):
-        flag = "__SUCCESS"
-        return LocalTarget(os.path.join(self.output_root, str(self.file_id), flag))
+        """
+        The output is a folder, named by file_id.
+        Use flag file to mark complete
+        :return: success flag file
+        """
+        return LocalTarget(os.path.join(self.output_root, str(self.file_id), self.flag))
 
     def program_args(self):
         return [

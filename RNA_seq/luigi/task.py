@@ -1,4 +1,5 @@
 from luigi.local_target import LocalTarget
+import os
 
 
 class Requires:
@@ -39,7 +40,9 @@ class Requires:
         """
         # Search task.__class__ for Requirement instances
         # return
-        task_keys = [k for k, v in task.__class__.__dict__.items() if isinstance(v, Requirement)]
+        task_keys = [
+            k for k, v in task.__class__.__dict__.items() if isinstance(v, Requirement)
+        ]
         return {k: getattr(task, k) for k in task_keys}
 
 
@@ -52,17 +55,22 @@ class Requirement:
         if task is None:
             return self
 
-        return task.clone(
-            self.task_class,
-            **self.params)
+        return task.clone(self.task_class, **self.params)
 
 
 class TargetOutput:
-    def __init__(self, file_pattern='{task.__class__.__name__}',
-                 ext='.txt', target_class=LocalTarget, **target_kwargs):
+    def __init__(
+        self,
+        file_pattern="{task.__class__.__name__}",
+        root_dir="",
+        ext=".txt",
+        target_class=LocalTarget,
+        **target_kwargs
+    ):
         self.file_pattern = file_pattern
         self.ext = ext
         self.target_class = target_class
+        self.root_dir = root_dir
         self.target_kwargs = target_kwargs
 
     def __get__(self, task, cls):
@@ -72,6 +80,6 @@ class TargetOutput:
 
     def __call__(self, task):
         # Determine the path etc here
-        filename = self.file_pattern + self.ext
+        filename = os.path.join(self.root_dir, self.file_pattern + self.ext)
 
         return self.target_class(filename.format(task=task), **self.target_kwargs)

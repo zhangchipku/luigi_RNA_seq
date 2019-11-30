@@ -6,8 +6,8 @@ from RNA_seq.preprocess import CleanCounts
 
 def main():
     # system level parameters
-    # human trascriptome fasta file
-    human_mRNA_path = os.path.join(
+    # trascriptome fasta file
+    transcriptome = os.path.join(
         "data", "human", "gencode.v27.transcripts.formated.fa"
     )
     # salmon program executable
@@ -37,7 +37,7 @@ def main():
             CleanCounts(
                 ID_path=ID_path,
                 annotation_path=annotation_path,
-                human_mRNA_path=human_mRNA_path,
+                transcriptome=transcriptome,
                 salmon_path=salmon_path,
                 index_path=index_path,
                 fastq_r1=fastq_r1,
