@@ -6,7 +6,7 @@ from pathlib import Path
 from .luigi.task import Requires, Requirement
 
 
-class HumanRNA(ExternalTask):
+class TranscriptomeFASTA(ExternalTask):
     """
     Make sure transcriptome file exists
     """
@@ -30,7 +30,7 @@ class Salmon(ExternalTask):
 
 class SalmonIndex(ExternalProgramTask):
     """
-    Build salmon index from human transcriptome
+    Build salmon index from transcriptome annotation
     Use Require descriptors for composition
     """
 
@@ -42,7 +42,7 @@ class SalmonIndex(ExternalProgramTask):
     n_threads = IntParameter()
     # requirements
     requires = Requires()
-    human_rna = Requirement(HumanRNA)
+    human_rna = Requirement(TranscriptomeFASTA)
     salmon = Requirement(Salmon)
 
     def output(self):

@@ -1,4 +1,4 @@
-# Using Luigi to control bioinformatics data processing pipeline
+# Using Luigi to control RNA-seq data processing pipeline
 ## Introduction
 ### Background
 Next generation sequencing of extracted mRNAs contain information on gene expression levels of samples. RNA-seq data processing is to first map the base-pair sequences to human genome and then count the number of reads per gene. The task is to submit a sample list with corresponding sequences as input to the workflow and get gene counts table of all samples as output. This workflow can be divided to the following tasks sequentially and controlled by luigi using external tasks and external program tasks.
