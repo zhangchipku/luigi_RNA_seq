@@ -1,10 +1,6 @@
 version: '3'
 services:
   app:
-    environment:
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - CSCI_SALT
     build:
       context: .
       args:
