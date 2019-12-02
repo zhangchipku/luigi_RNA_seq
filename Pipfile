@@ -11,6 +11,7 @@ pytest-cov = "*"
 luigi = "*"
 pandas = "*"
 seaborn = "*"
+setuptools-scm = "*"
 
 [requires]
 python_version = "3.7"
