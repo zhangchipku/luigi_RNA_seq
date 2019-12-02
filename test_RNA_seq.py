@@ -6,6 +6,7 @@ from RNA_seq.summary import SummarizeCounts, SummarizeMapping
 from RNA_seq.preprocess import CleanCounts, AnnotationFile, MapFigure
 from RNA_seq.luigi.task import Requirement, Requires, TargetOutput
 from RNA_seq.luigi.target import SuffixPreservingLocalTarget
+from RNA_seq.wrapup import AllReports
 from luigi import build, format
 from tempfile import TemporaryDirectory
 import pandas as pd
@@ -93,20 +94,19 @@ class TaskTests(TestCase):
                 rate_out = TargetOutput(
                     target_class=SuffixPreservingLocalTarget,
                     root_dir=output_root,
-                    ext="_rate.png",
+                    ext="_rate.pdf",
                     format=format.Nop,
                 )
                 reads_out = TargetOutput(
                     target_class=SuffixPreservingLocalTarget,
                     root_dir=output_root,
-                    ext="_reads.png",
+                    ext="_reads.pdf",
                     format=format.Nop,
                 )
 
             class DummyClean(CleanCounts):
                 output_root = tmp
                 requires = Requires()
-                map_fig = Requirement(DummyFig)
                 raw_counts = Requirement(DummyCount)
                 annotation = Requirement(AnnotationFile)
                 tpm_out = TargetOutput(
@@ -120,10 +120,15 @@ class TaskTests(TestCase):
                     root_dir=output_root,
                 )
 
+            class DummyAll(AllReports):
+                def requires(self):
+                    yield self.clone(DummyClean)
+                    yield self.clone(DummyFig)
+
             # build and test endpoints
             build(
                 [
-                    DummyClean(
+                    DummyAll(
                         ID_path=id_path,
                         annotation_path=annot_path,
                         transcriptome="fake",
@@ -138,8 +143,8 @@ class TaskTests(TestCase):
                 local_scheduler=True,
                 log_level="INFO",
             )
-            self.assertTrue(os.path.exists(os.path.join(tmp, "DummyFig_reads.png")))
-            self.assertTrue(os.path.exists(os.path.join(tmp, "DummyFig_rate.png")))
+            self.assertTrue(os.path.exists(os.path.join(tmp, "DummyFig_reads.pdf")))
+            self.assertTrue(os.path.exists(os.path.join(tmp, "DummyFig_rate.pdf")))
             self.assertEqual(
                 pd.read_csv(os.path.join(tmp, "DummyClean_count.csv")).iloc[0, 1], 150
             )

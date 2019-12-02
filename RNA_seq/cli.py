@@ -1,7 +1,7 @@
 from luigi import build
 import os
 import argparse
-from RNA_seq.preprocess import CleanCounts
+from RNA_seq.wrapup import AllReports
 
 
 def main():
@@ -34,7 +34,7 @@ def main():
 
     build(
         [
-            CleanCounts(
+            AllReports(
                 ID_path=ID_path,
                 annotation_path=annotation_path,
                 transcriptome=transcriptome,

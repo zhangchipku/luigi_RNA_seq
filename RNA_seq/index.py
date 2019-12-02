@@ -1,6 +1,7 @@
 from luigi import ExternalTask, Parameter, IntParameter
 import os
 from luigi.local_target import LocalTarget
+from luigi.util import inherits
 from luigi.contrib.external_program import ExternalProgramTask
 from pathlib import Path
 from .luigi.task import Requires, Requirement
@@ -28,6 +29,7 @@ class Salmon(ExternalTask):
         return LocalTarget(str(self.salmon_path))
 
 
+@inherits(Salmon, TranscriptomeFASTA)
 class SalmonIndex(ExternalProgramTask):
     """
     Build salmon index from transcriptome annotation
@@ -36,8 +38,6 @@ class SalmonIndex(ExternalProgramTask):
 
     flag = "__SUCCESS"
     # parameters
-    transcriptome = Parameter()
-    salmon_path = Parameter()
     index_path = Parameter()
     n_threads = IntParameter()
     # requirements
