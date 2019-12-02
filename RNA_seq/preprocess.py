@@ -33,13 +33,13 @@ class MapFigure(Task):
     rate_out = TargetOutput(
         target_class=SuffixPreservingLocalTarget,
         root_dir=output_root,
-        ext="_rate.png",
+        ext="_rate.pdf",
         format=format.Nop,
     )
     reads_out = TargetOutput(
         target_class=SuffixPreservingLocalTarget,
         root_dir=output_root,
-        ext="_reads.png",
+        ext="_reads.pdf",
         format=format.Nop,
     )
 
@@ -50,16 +50,16 @@ class MapFigure(Task):
         # Read summary
         with self.input()["sum_map"].open("r") as file:
             df = pd.read_table(file)
-        # write png files
+        # Create plots
         sns.set(rc={"figure.figsize": (12, 8)})
         rate_plot = sns.barplot(x="Sample", y="Mapped_Rate", data=df)
         rate_plot.set_xticklabels(df.Sample, rotation=45, ha="right")
-        with self.output()["rate"].open("w") as rate_out:
-            rate_plot.figure.savefig(rate_out, dpi=600)
-
         reads_plot = sns.barplot(x="Sample", y="Mapped_Reads", data=df)
         reads_plot.set_xticklabels(df.Sample, rotation=45, ha="right")
-        with self.output()["reads"].open("w") as reads_out:
+        #  write pdf files
+        with self.output()["rate"].temporary_path() as rate_out:
+            rate_plot.figure.savefig(rate_out, dpi=600)
+        with self.output()["reads"].temporary_path() as reads_out:
             reads_plot.figure.savefig(reads_out, dpi=600)
 
 
