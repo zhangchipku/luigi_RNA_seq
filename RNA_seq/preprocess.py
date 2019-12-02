@@ -1,11 +1,13 @@
 import pandas as pd
 import seaborn as sns
 from luigi import Parameter, Task, IntParameter, format, ExternalTask, LocalTarget
+from luigi.util import inherits
 from .summary import SummarizeCounts, SummarizeMapping
 from .luigi.target import SuffixPreservingLocalTarget
 from .luigi.task import Requirement, Requires, TargetOutput
 
 
+@inherits(SummarizeMapping)
 class MapFigure(Task):
     """
     Visualize mapping stats from mapping summary table
@@ -16,15 +18,6 @@ class MapFigure(Task):
 
     # constant
     output_root = SummarizeMapping.output_root
-    # parameters
-    ID_path = Parameter()
-    transcriptome = Parameter()
-    salmon_path = Parameter()
-    index_path = Parameter()
-    fastq_r1 = Parameter()
-    fastq_r2 = Parameter()
-    fastq_suffix = Parameter()
-    n_threads = IntParameter()
 
     # requirements
     requires = Requires()
@@ -74,6 +67,7 @@ class AnnotationFile(ExternalTask):
         return LocalTarget(str(self.annotation_path))
 
 
+@inherits(SummarizeCounts, AnnotationFile)
 class CleanCounts(Task):
     """
     Clean up counts and tpm table
@@ -87,20 +81,9 @@ class CleanCounts(Task):
 
     # constant
     output_root = SummarizeMapping.output_root
-    # parameters
-    ID_path = Parameter()
-    transcriptome = Parameter()
-    salmon_path = Parameter()
-    index_path = Parameter()
-    fastq_r1 = Parameter()
-    fastq_r2 = Parameter()
-    fastq_suffix = Parameter()
-    n_threads = IntParameter()
-    annotation_path = Parameter()
 
     # requirements
     requires = Requires()
-    map_fig = Requirement(MapFigure)
     annotation = Requirement(AnnotationFile)
     raw_counts = Requirement(SummarizeCounts)
     # output

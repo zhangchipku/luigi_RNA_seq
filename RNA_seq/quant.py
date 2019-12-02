@@ -2,6 +2,7 @@ from luigi import ExternalTask, Parameter, IntParameter
 import os
 from luigi.local_target import LocalTarget
 from luigi.contrib.external_program import ExternalProgramTask
+from luigi.util import inherits
 from pathlib import Path
 from .index import Salmon, SalmonIndex
 from .luigi.task import Requires, Requirement
@@ -37,6 +38,7 @@ class FastqInput(ExternalTask):
         }
 
 
+@inherits(FastqInput, SalmonIndex)
 class SalmonQuant(ExternalProgramTask):
     """
     Run the sample sequence quantification using Salmon
@@ -48,15 +50,6 @@ class SalmonQuant(ExternalProgramTask):
     output_root = os.path.join("data", "output")
     fastq_root = os.path.join("data", "fastq")
     flag = "__SUCCESS"
-    # parameters
-    file_id = Parameter()
-    transcriptome = Parameter()
-    salmon_path = Parameter()
-    index_path = Parameter()
-    fastq_r1 = Parameter()
-    fastq_r2 = Parameter()
-    fastq_suffix = Parameter()
-    n_threads = IntParameter()
 
     # requirements
     requires = Requires()

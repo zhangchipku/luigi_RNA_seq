@@ -1,12 +1,15 @@
 from luigi import Parameter, Task, IntParameter
 import os
 from luigi.contrib.external_program import ExternalProgramTask
+from luigi.util import inherits
 from .quant import SalmonQuant
 from .luigi.target import SuffixPreservingLocalTarget
 import pandas as pd
 from .luigi.task import TargetOutput
+from .index import SalmonIndex
 
 
+@inherits(SalmonIndex)
 class SummarizeMapping(ExternalProgramTask):
     """
     Find mapped reads and rates from sample quantification logs
@@ -22,13 +25,9 @@ class SummarizeMapping(ExternalProgramTask):
     input_root = SalmonQuant.output_root
     # parameters
     ID_path = Parameter()
-    transcriptome = Parameter()
-    salmon_path = Parameter()
-    index_path = Parameter()
     fastq_r1 = Parameter()
     fastq_r2 = Parameter()
     fastq_suffix = Parameter()
-    n_threads = IntParameter()
 
     out_file = TargetOutput(
         root_dir=output_root, target_class=SuffixPreservingLocalTarget
@@ -57,6 +56,7 @@ class SummarizeMapping(ExternalProgramTask):
             super().run()
 
 
+@inherits(SummarizeMapping)
 class SummarizeCounts(Task):
     """
     Find transcript counts and tpms from sample quantification tables
@@ -68,15 +68,7 @@ class SummarizeCounts(Task):
     # constant
     output_root = SummarizeMapping.output_root
     input_root = SalmonQuant.output_root
-    # parameters
-    ID_path = Parameter()
-    transcriptome = Parameter()
-    salmon_path = Parameter()
-    index_path = Parameter()
-    fastq_r1 = Parameter()
-    fastq_r2 = Parameter()
-    fastq_suffix = Parameter()
-    n_threads = IntParameter()
+
     # outputs
     count_out = TargetOutput(
         root_dir=output_root, ext="_count.csv", target_class=SuffixPreservingLocalTarget
