@@ -1,6 +1,6 @@
 import pandas as pd
 import seaborn as sns
-from luigi import Parameter, Task, IntParameter, format, ExternalTask, LocalTarget
+from luigi import Parameter, Task, format, ExternalTask, LocalTarget
 from luigi.util import inherits
 from .summary import SummarizeCounts, SummarizeMapping
 from .luigi.target import SuffixPreservingLocalTarget
