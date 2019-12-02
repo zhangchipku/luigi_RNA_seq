@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.com/csci-e-29/2019fa-final-project-zhangchipku.svg?token=w7q3XKxTQbrLDbx15vf2&branch=master)](https://travis-ci.com/csci-e-29/2019fa-final-project-zhangchipku)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/52ce2229130f660caefe/maintainability)](https://codeclimate.com/repos/5de5225264d0f3014c00fabd/maintainability)
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/52ce2229130f660caefe/test_coverage)](https://codeclimate.com/repos/5de5225264d0f3014c00fabd/test_coverage)
+
 # Using Luigi to control RNA-seq data processing pipeline
 ## Introduction
 ### Background
