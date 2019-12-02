@@ -11,7 +11,7 @@ before_install:
 
 install:
 - pip install pipenv
-- pipenv install --system --deploy --ignore-pipfile
+- pipenv install --dev --ignore-pipfile --deploy
 before_script: # code coverage tool
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
