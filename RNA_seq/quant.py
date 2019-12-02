@@ -1,4 +1,4 @@
-from luigi import ExternalTask, Parameter, IntParameter
+from luigi import ExternalTask, Parameter
 import os
 from luigi.local_target import LocalTarget
 from luigi.contrib.external_program import ExternalProgramTask

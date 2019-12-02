@@ -1,4 +1,4 @@
-from luigi import Parameter, Task, IntParameter
+from luigi import Parameter, Task
 import os
 from luigi.contrib.external_program import ExternalProgramTask
 from luigi.util import inherits
