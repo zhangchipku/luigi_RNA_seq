@@ -21,20 +21,21 @@ class FastqInput(ExternalTask):
     fastq_r2 = Parameter()
     fastq_suffix = Parameter()
 
+    def _get_fastq_path(self, reads):
+        """
+        get file path for fastq files
+        :param reads: str, r1 or r2
+        :return: path
+        """
+        return os.path.join(
+                    str(self.fastq_root),
+                    str(self.file_id) + reads + str(self.fastq_suffix),
+                )
+
     def output(self):
         return {
-            "R1": LocalTarget(
-                os.path.join(
-                    str(self.fastq_root),
-                    str(self.file_id) + str(self.fastq_r1) + str(self.fastq_suffix),
-                )
-            ),
-            "R2": LocalTarget(
-                os.path.join(
-                    str(self.fastq_root),
-                    str(self.file_id) + str(self.fastq_r2) + str(self.fastq_suffix),
-                )
-            ),
+            "R1": LocalTarget(self._get_fastq_path(str(self.fastq_r1))),
+            "R2": LocalTarget(self._get_fastq_path(str(self.fastq_r2)))
         }
 
 
