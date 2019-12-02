@@ -38,8 +38,7 @@ class SummarizeMapping(ExternalProgramTask):
 
     # requirements
     def requires(self):
-        with open(str(self.ID_path), "r") as id_file:
-            ids = id_file.read().splitlines()
+        ids = get_file_ids(str(self.ID_path))
         return {x: self.clone(SalmonQuant, file_id=x) for x in ids}
 
     def program_args(self):
@@ -82,8 +81,7 @@ class SummarizeCounts(Task):
 
     # requirements
     def requires(self):
-        with open(str(self.ID_path), "r") as id_file:
-            ids = id_file.read().splitlines()
+        ids = get_file_ids(str(self.ID_path))
         return {x: self.clone(SalmonQuant, file_id=x) for x in ids}
 
     def _get_sample_quant(self, x):
@@ -96,8 +94,7 @@ class SummarizeCounts(Task):
 
     def run(self):
         # Read in all file ids
-        with open(str(self.ID_path), "r") as id_file:
-            ids = id_file.read().splitlines()
+        ids = get_file_ids(str(self.ID_path))
         # Get the framework from the first table
         with open(self._get_sample_quant(ids[0]), "r") as file:
             df = pd.read_table(file)
@@ -115,7 +112,13 @@ class SummarizeCounts(Task):
             counts[x] = df["NumReads"]
             tpm[x] = df["TPM"]
         # write csv files
-        with self.output()["count"].open("w") as count_out:
+        with self.output()["count"].temporary_path() as count_out:
             counts.to_csv(count_out, index=False)
-        with self.output()["tpm"].open("w") as tpm_out:
+        with self.output()["tpm"].temporary_path() as tpm_out:
             tpm.to_csv(tpm_out, index=False)
+
+
+def get_file_ids(id_text_file):
+    with open(id_text_file, "r") as file:
+        ids = file.read().splitlines()
+    return ids
